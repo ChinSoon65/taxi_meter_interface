@@ -11,8 +11,8 @@ class erpApp(tk.Tk):
     def __init__(self):
         super().__init__()
         self.title("ERP")
-        self.geometry("480x320")
-        self.configure(bg="#ADD8E6")  # Dark mode background
+        self.geometry("380x120")
+        self.configure(bg="#000033")  # Dark mode background
         self.resizable(True, True)
         self.wm_attributes("-topmost", 1)  # Keep the window always on top
 
@@ -24,7 +24,7 @@ class erpApp(tk.Tk):
     def welcome_screen(self):
         self.clear_screen()
 
-        label = tk.Label(self, text="WELCOME", font=("Ubuntu Light", 24, "bold"), bg="#00008B", fg="white")
+        label = tk.Label(self, text="WELCOME", font=("Ubuntu Light", 24, "bold"), bg="#000033", fg="white")
         label.pack(expand=True)
 
         self.after(2500, self.show_main_menu)
@@ -33,20 +33,20 @@ class erpApp(tk.Tk):
 
         self.clear_screen()
 
-        # Display Top Info (Date, Region, Earnings)
         now = datetime.now()
-        date_str = now.strftime("%d-%m-%Y")
-        self.info_frame = tk.Frame(self, bg="#00008B")
-        self.info_frame.pack(pady=10)
 
-        self.date_label = tk.Label(self.info_frame, text=f"Date: {date_str}", fg="white", bg="#00008B", font=("Helvetica", 10))
-        self.date_label.grid(row=0, column=0, padx=5)
+        time_str = now.strftime("%I:%M %p")  # 06:17 PM format
+        date_str = now.strftime("%a, %d/%m/%Y")  # Tue, 23/04/2024 format
 
-        # Set time
-        current_time = time.strftime("%H:%M:%S")
+        self.info_frame = tk.Frame(self, bg="#000033")
+        self.info_frame.pack(expand=True, fill='both')
 
-        self.time_label = tk.Label(self.info_frame, text=f"Time: {current_time}", fg="white", bg="#00008B", font=("Helvetica", 10))
-        self.time_label.grid(row=1, column=0, padx=5)
+        self.time_label = tk.Label(self.info_frame, text=f"{time_str}", fg="white", bg="#000033", font=("Helvetica", 40))
+        self.time_label.pack(pady=(20, 0))  # Add spacing above and below
+
+        self.date_label = tk.Label(self.info_frame, text=f"{date_str}", fg="white", bg="#000033", font=("Helvetica", 10))
+        self.date_label.pack()
+
 
 
         self.update_time()
@@ -55,8 +55,8 @@ class erpApp(tk.Tk):
     def update_time(self):
 
         if hasattr(self, "time_label") and self.time_label.winfo_exists():
-            current_time = time.strftime("%H:%M:%S")
-            self.time_label.config(text=f"Time: {current_time}")
+            current_time = time.strftime("%I:%M %p")
+            self.time_label.config(text=f"{current_time}")
             self.after(1000, self.update_time)
 
     def clear_screen(self):

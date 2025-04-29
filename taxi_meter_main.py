@@ -38,11 +38,8 @@ class TaxiMeterApp(tk.Tk):
     def play_notification_sound(self):
         pygame.mixer.init()
         pygame.mixer.music.load("C:/_Projects/taxi_meter_interface/sfx/notification.mp3")
-        pygame.mixer.music.play(-1)  # -1 means loop indefinitely
+        pygame.mixer.music.play()  
 
-        time.sleep(10)  # Let it play for 30 seconds
-
-        self.is_notification_playing = False
 
 
     def stop_notification_sound(self):
