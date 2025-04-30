@@ -32,25 +32,38 @@ class erpApp(tk.Tk):
     def show_main_menu(self):
         self.clear_screen()
 
-        # Loading of Logo
+        # === Top Bar Frame (holds both left and right sections) ===
+        self.top_bar_frame = tk.Frame(self, bg="#000033")
+        self.top_bar_frame.pack(fill="x", pady=0)
+
+        # === Top-Left Frame (Logo + Balance) ===
+        self.top_left_frame = tk.Frame(self.top_bar_frame, bg="#000033")
+        self.top_left_frame.pack(side="left", padx=10, anchor="n")
+
+        # CEPAS Logo (resized to same size as hamburger)
         logo_path = r"C:\_projects\taxi_meter_interface\asserts\cepas_logo.png" 
-        logo_img = Image.open(logo_path)
-        logo_img = logo_img.resize((30,30))
+        logo_img = Image.open(logo_path).resize((30, 30))  # Ensure exact same size
         self.logo_photo = ImageTk.PhotoImage(logo_img)
 
-        # === Create Frame for Top-Left Content ===
-        self.top_left_frame = tk.Frame(self, bg="#000033")
-        self.top_left_frame.pack(anchor="nw", padx=10, pady=0)  # Top-left corner
-
-        # === Logo Label ===
         self.logo_label = tk.Label(self.top_left_frame, image=self.logo_photo, bg="#000033")
-        self.logo_label.pack(side="left")
+        self.logo_label.pack(side="left", pady=0)
 
-        # === Balance Label ===
-        balance_amount = "$0.00"  # this is going to be replaced
+        # Balance label
+        balance_amount = "$0.00"
         self.balance_label = tk.Label(self.top_left_frame, text=balance_amount, fg="white", bg="#000033", font=("Helvetica", 10))
-        self.balance_label.pack(side="left", padx=5)
+        self.balance_label.pack(side="left", padx=5, pady=0)
 
+        # === Top-Right Frame (Hamburger Menu) ===
+        self.top_right_frame = tk.Frame(self.top_bar_frame, bg="#000033")
+        self.top_right_frame.pack(side="right", padx=0, anchor="n")
+
+        # Hamburger Menu Icon
+        menu_logo_path = r"C:\_projects\taxi_meter_interface\asserts\hamburger_main_menu_logo.png"
+        menu_img = Image.open(menu_logo_path).resize((30, 30))  # Same size as above
+        self.menu_photo = ImageTk.PhotoImage(menu_img)
+
+        self.menu_label = tk.Label(self.top_right_frame, image=self.menu_photo, bg="#000033")
+        self.menu_label.pack(anchor="n", pady=0)
 
         now = datetime.now()
 
