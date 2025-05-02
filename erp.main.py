@@ -18,7 +18,7 @@ class erpApp(tk.Tk):
 
         self.elapsed_start_time = time.time()
         self.is_colon_visible = True  # Track whether the colon is visible
-
+        
         self.welcome_screen()
 
     def welcome_screen(self):
@@ -62,8 +62,10 @@ class erpApp(tk.Tk):
         menu_img = Image.open(menu_logo_path).resize((30, 30))  # Same size as above
         self.menu_photo = ImageTk.PhotoImage(menu_img)
 
-        self.menu_label = tk.Label(self.top_right_frame, image=self.menu_photo, bg="#000033")
+        self.menu_label = tk.Label(self.top_right_frame, image=self.menu_photo, bg="#000033", cursor="hand2")
         self.menu_label.pack(anchor="n", pady=0)
+
+        self.menu_label.bind("<Button-1>", lambda e: self.obu_menu_settings())
 
         now = datetime.now()
 
@@ -81,9 +83,25 @@ class erpApp(tk.Tk):
 
         self.update_time()
 
+    def obu_menu_settings(self, event = None):
+
+        self.clear_screen()
+        # Top bar again for consistency
+        self.top_bar_frame = tk.Frame(self, bg="#000033")
+        self.top_bar_frame.pack(fill="x", pady=0)
+
+        # Back button (left side)
+        back_button = tk.Button(self.top_bar_frame, text="← Back", command=self.show_main_menu, bg="#000033", fg="white", relief="flat", font=("Helvetica", 10))
+        back_button.pack(side="left", padx=10)
+
+        # Settings content area
+        settings_content = tk.Frame(self, bg="white")
+        settings_content.pack(expand=True, fill="both")
+
+        tk.Label(settings_content, text="Settings Screen", font=("Arial", 16), bg="white").pack(pady=30)
+        
 
     def update_time(self):
-
         if hasattr(self, "time_label") and self.time_label.winfo_exists():
             current_time = time.strftime("%I:%M %p")
             self.time_label.config(text=f"{current_time}")
