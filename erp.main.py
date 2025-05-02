@@ -130,13 +130,12 @@ class erpApp(tk.Tk):
         back_button = tk.Button(self.top_right_frame, image=self.logo_photo, command=self.show_main_menu, bg="#000033", fg="white", relief="flat", font=("Helvetica", 10))
         back_button.pack(side="right", padx=0)
 
-
         # Middle bar again for consistency
         self.middle_bar_frame = tk.Frame(self, bg="#000033")
         self.middle_bar_frame.pack(side="top", fill="x", pady=0)
 
         icon_label_frame = tk.Frame(self.middle_bar_frame, bg="#000033")
-        icon_label_frame.pack(side="left", padx=80)
+        icon_label_frame.pack(side="left", padx=40)
 
         logo_path3 = r"C:\_projects\taxi_meter_interface\asserts\setting_gear.png"
         logo_img3 = Image.open(logo_path3).resize((60, 60))
@@ -151,7 +150,41 @@ class erpApp(tk.Tk):
         settings_label = tk.Label(icon_label_frame, text="Settings", bg="#000033", fg="white", font=("Helvetica", 9))
         settings_label.pack(side="top")  # Stacks below
 
+        # New frame for the button, placed to the right of the icon_label_frame
+        next_button_frame = tk.Frame(self.middle_bar_frame, bg="#000033")
+        next_button_frame.pack(side="left", padx=0)
 
+        logo_quit = r"C:\_projects\taxi_meter_interface\asserts\exit.png"
+        logo_quit_img = Image.open(logo_quit).resize((60, 60))
+
+        self.logo_quit = ImageTk.PhotoImage(logo_quit_img)
+
+        next_button = tk.Button(next_button_frame, image=self.logo_quit, command=self.quit_app,
+                                bg="#000033", fg="white", relief="flat", font=("Helvetica", 10))
+        next_button.pack(side="top")
+
+        # (Optional) Label under the new button
+        next_label = tk.Label(next_button_frame, text="Quit", bg="#000033", fg="white", font=("Helvetica", 9))
+        next_label.pack(side="top")
+
+
+
+        # New frame for the button, placed to the right of the icon_label_frame
+        next_button_frame2 = tk.Frame(self.middle_bar_frame, bg="#000033")
+        next_button_frame2.pack(side="left", padx=20)
+
+        logo_card_payment = r"C:\_projects\taxi_meter_interface\asserts\card_payment.png"
+        logo_card_payment_img = Image.open(logo_card_payment).resize((80, 80))
+
+        self.logo_card_payment = ImageTk.PhotoImage(logo_card_payment_img)
+
+        card_payment_button = tk.Button(next_button_frame2, image=self.logo_card_payment, command=self.quit_app,
+                                bg="#000033", fg="white", relief="flat", font=("Helvetica", 10))
+        card_payment_button.pack(side="top")
+
+
+    def quit_app(self):
+        self.destroy()
 
     def update_time(self):
         if hasattr(self, "time_label") and self.time_label.winfo_exists():
