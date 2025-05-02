@@ -131,13 +131,27 @@ class erpApp(tk.Tk):
         back_button.pack(side="right", padx=0)
 
 
+        # Middle bar again for consistency
+        self.middle_bar_frame = tk.Frame(self, bg="#000033")
+        self.middle_bar_frame.pack(side="top", fill="x", pady=0)
+
+        icon_label_frame = tk.Frame(self.middle_bar_frame, bg="#000033")
+        icon_label_frame.pack(side="left", padx=80)
+
+        logo_path3 = r"C:\_projects\taxi_meter_interface\asserts\setting_gear.png"
+        logo_img3 = Image.open(logo_path3).resize((60, 60))
+
+        self.logo_photo3 = ImageTk.PhotoImage(logo_img3)
+
+        icon_button = tk.Button(icon_label_frame, image=self.logo_photo3, command=self.show_main_menu,
+                        bg="#000033", fg="white", relief="flat", font=("Helvetica", 10))
+        icon_button.pack(side="top")  # Stacks on top
+
+        # Text Label
+        settings_label = tk.Label(icon_label_frame, text="Settings", bg="#000033", fg="white", font=("Helvetica", 9))
+        settings_label.pack(side="top")  # Stacks below
 
 
-
-
-
-
-        
 
     def update_time(self):
         if hasattr(self, "time_label") and self.time_label.winfo_exists():
