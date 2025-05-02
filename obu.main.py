@@ -11,9 +11,24 @@ class erpApp(tk.Tk):
     def __init__(self):
         super().__init__()
         self.title("ERP")
+        self.overrideredirect(True)
+
+        # Set your desired window size
+        window_width = 350
+        window_height = 140
+
+        # Get screen width and height
+        screen_width = self.winfo_screenwidth()
+
+        # Calculate position for top-right corner
+        x = screen_width - window_width
+        y = 0
+
+        # Apply the position
+        self.geometry(f"{window_width}x{window_height}+{x}+{y}")
+
         self.geometry("350x140")
         self.configure(bg="#000033")  # Dark mode background
-        self.resizable(True, True)
         self.wm_attributes("-topmost", 1)  # Keep the window always on top
 
         self.elapsed_start_time = time.time()
@@ -62,10 +77,8 @@ class erpApp(tk.Tk):
         menu_img = Image.open(menu_logo_path).resize((30, 30))  # Same size as above
         self.menu_photo = ImageTk.PhotoImage(menu_img)
 
-        self.menu_label = tk.Label(self.top_right_frame, image=self.menu_photo, bg="#000033", cursor="hand2")
+        self.menu_label = tk.Label(self.top_right_frame, image=self.menu_photo, bg="#000033")
         self.menu_label.pack(anchor="n", pady=0)
-
-        self.menu_label.bind("<Button-1>", lambda e: self.obu_menu_settings())
 
         now = datetime.now()
 
@@ -83,63 +96,9 @@ class erpApp(tk.Tk):
 
         self.update_time()
 
-    def obu_menu_settings(self, event = None):
-
-        self.clear_screen()
-
-        # Top bar again for consistency
-        self.top_bar_frame = tk.Frame(self, bg="#000033")
-        self.top_bar_frame.pack(fill="x", pady=0)
-
-        # === Top-Left Frame (Logo + Balance) ===
-        self.top_left_frame = tk.Frame(self.top_bar_frame, bg="#000033")
-        self.top_left_frame.pack(side="left", padx=10, anchor="n")
-
-        # CEPAS Logo (resized to same size as hamburger)
-        logo_path2 = r"C:\_projects\taxi_meter_interface\asserts\cepas_logo.png" 
-        logo_img2 = Image.open(logo_path2).resize((30, 30))  # Ensure exact same size
-        self.logo_photo2 = ImageTk.PhotoImage(logo_img2)
-
-        self.logo_label = tk.Label(self.top_left_frame, image=self.logo_photo2, bg="#000033")
-        self.logo_label.pack(side="left", pady=0)
-
-        # Balance label
-        balance_amount = "$0.00"
-        self.balance_label = tk.Label(self.top_left_frame, text=balance_amount, fg="white", bg="#000033", font=("Helvetica", 10))
-        self.balance_label.pack(side="left", padx=5, pady=0)
-
-        now = datetime.now()
-
-        time_str = now.strftime("%I:%M %p")  # 06:17 PM format
-
-        self.time_label = tk.Label(self.top_bar_frame, text=f"{time_str}", fg="white", bg="#000033", font=("Helvetica", 13))
-        self.time_label.place(relx=0.5, rely=0.5, anchor="center")
-
-        self.update_time()
-
-        # === top_right_frame (Logo + Balance) ===
-        self.top_right_frame = tk.Frame(self.top_bar_frame, bg="#000033")
-        self.top_right_frame.pack(side="right", padx=0, anchor="n")
-
-        # home Logo 
-        logo_path = r"C:\_projects\taxi_meter_interface\asserts\home_menu.png" 
-        logo_img = Image.open(logo_path).resize((30, 30))  # Ensure exact same size
-        self.logo_photo = ImageTk.PhotoImage(logo_img)
-
-        # Home menu button
-        back_button = tk.Button(self.top_right_frame, image=self.logo_photo, command=self.show_main_menu, bg="#000033", fg="white", relief="flat", font=("Helvetica", 10))
-        back_button.pack(side="right", padx=0)
-
-
-
-
-
-
-
-
-        
 
     def update_time(self):
+
         if hasattr(self, "time_label") and self.time_label.winfo_exists():
             current_time = time.strftime("%I:%M %p")
             self.time_label.config(text=f"{current_time}")
