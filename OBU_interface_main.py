@@ -10,24 +10,49 @@ from PIL import Image, ImageTk
 class erpApp(tk.Tk):
     def __init__(self):
         super().__init__()
+        
         self.title("ERP")
-        self.geometry("350x140")
+
+        # Set window size
+        window_width = 350
+        window_height = 140
+
+        # Get screen width and height
+        screen_width = self.winfo_screenwidth()
+        screen_height = self.winfo_screenheight()
+
+        # Set position to top-right
+        x = screen_width - window_width
+        y = 0
+        self.geometry(f"{window_width}x{window_height}+{x}+{y}")
+
         self.configure(bg="#000033")  # Dark mode background
         self.resizable(True, True)
         self.wm_attributes("-topmost", 1)  # Keep the window always on top
 
+        self.overrideredirect(True)
+
         self.elapsed_start_time = time.time()
         self.is_colon_visible = True  # Track whether the colon is visible
         
-        self.welcome_screen()
+        self.welcome_screen() # starting interface
+        
+        self.is_card_on = True # Sets card to be ON by default for switch_card_payment_image function
 
-    def welcome_screen(self):
+    def welcome_screen(self):  # starting interface
         self.clear_screen()
+        self.geometry("350x140")  # Fixed window size
 
-        label = tk.Label(self, text="WELCOME", font=("Ubuntu Light", 24, "bold"), bg="#000033", fg="white")
-        label.pack(expand=True)
+        # Load and display image
+        image_path = r"C:\_projects\taxi_meter_interface\asserts\welcome_screen.png"
+        image = Image.open(image_path)
+        image = image.resize((350, 140))  # Optional: force-fit to window
 
-        self.after(500, self.show_main_menu)
+        self.tk_image = ImageTk.PhotoImage(image)  # Keep a reference on self
+        label = tk.Label(self, image=self.tk_image, borderwidth=0)
+        label.pack()
+
+        self.after(500, self.show_main_menu)  
 
     def show_main_menu(self):
         self.clear_screen()
@@ -163,34 +188,61 @@ class erpApp(tk.Tk):
                                 bg="#000033", fg="white", relief="flat", font=("Helvetica", 10))
         next_button.pack(side="top")
 
-        # (Optional) Label under the new button
-        next_label = tk.Label(next_button_frame, text="Quit", bg="#000033", fg="white", font=("Helvetica", 9))
-        next_label.pack(side="top")
+        quit_text_label = tk.Label(next_button_frame, text="Quit", bg="#000033", fg="white", font=("Helvetica", 9))
+        quit_text_label.pack(side="top")
 
 
+        # Card Payment "ON" button
 
-        # New frame for the button, placed to the right of the icon_label_frame
-        next_button_frame2 = tk.Frame(self.middle_bar_frame, bg="#000033")
-        next_button_frame2.pack(side="left", padx=20)
+        # Label for Card Payment icon "ON"
+        card_payment_button_label = tk.Frame(self.middle_bar_frame, bg="#000033")
+        card_payment_button_label.pack(side="left", padx=20)
 
-        logo_card_payment = r"C:\_projects\taxi_meter_interface\asserts\card_payment.png"
-        logo_card_payment_img = Image.open(logo_card_payment).resize((80, 80))
+        # Load Card Payment icon "ON"
+        logo_card_payment_on = r"C:\_projects\taxi_meter_interface\asserts\card_payment_on.png"
+        logo_card_payment_on_img = Image.open(logo_card_payment_on).resize((80, 80))
+        self.logo_card_payment_on = ImageTk.PhotoImage(logo_card_payment_on_img)
 
-        self.logo_card_payment = ImageTk.PhotoImage(logo_card_payment_img)
+        # Load Card Payment icon "OFF" (preload for switch)
+        logo_card_payment_off = r"C:\_projects\taxi_meter_interface\asserts\card_payment_off.png"
+        logo_card_payment_off_img = Image.open(logo_card_payment_off).resize((80, 80))
+        self.logo_card_payment_off = ImageTk.PhotoImage(logo_card_payment_off_img)
 
-        card_payment_button = tk.Button(next_button_frame2, image=self.logo_card_payment, command=self.quit_app,
+        self.current_logo = self.logo_card_payment_on if self.is_card_on else self.logo_card_payment_off
+
+        self.card_payment_on_button = tk.Button(card_payment_button_label, image=self.current_logo, command=self.switch_card_payment_image,
                                 bg="#000033", fg="white", relief="flat", font=("Helvetica", 10))
-        card_payment_button.pack(side="top")
+        self.card_payment_on_button.pack(side="top")
 
-
+    def switch_card_payment_image(self):
+        if self.is_card_on:
+            self.card_payment_on_button.config(image=self.logo_card_payment_off)
+            self.is_card_on = False
+        else:
+            self.card_payment_on_button.config(image=self.logo_card_payment_on)
+            self.is_card_on = True
+            
     def quit_app(self):
-        self.destroy()
+        self.clear_screen()
+        self.geometry("350x140")  # Fixed window size
+
+        # Load and display image
+        image_path = r"C:\_projects\taxi_meter_interface\asserts\goodbye.png"
+        image = Image.open(image_path)
+        image = image.resize((350, 140))  # Optional: force-fit to window
+
+        self.tk_image = ImageTk.PhotoImage(image)  # Keep a reference on self
+        label = tk.Label(self, image=self.tk_image, borderwidth=0)
+        label.pack()
+
+        self.after(500, self.destroy)  
+        
 
     def update_time(self):
         if hasattr(self, "time_label") and self.time_label.winfo_exists():
             current_time = time.strftime("%I:%M %p")
             self.time_label.config(text=f"{current_time}")
-            self.after(1000, self.update_time)
+            self.after(100, self.update_time)
 
     def clear_screen(self):
         for widget in self.winfo_children():
