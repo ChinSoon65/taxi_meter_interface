@@ -10,8 +10,6 @@ from PIL import Image, ImageTk
 class erpApp(tk.Tk):
     def __init__(self):
         super().__init__()
-        
-        self.title("ERP")
 
         # Set window size
         window_width = 350
@@ -39,6 +37,12 @@ class erpApp(tk.Tk):
         
         self.is_card_on = True # Sets card to be ON by default for switch_card_payment_image function
 
+        # OBU Balance amount text file
+        self.balance_file = "balance.txt"
+        self.balance = self.load_balance() 
+
+
+
     def welcome_screen(self):  # starting interface
         self.clear_screen()
         self.geometry("350x140")  # Fixed window size
@@ -52,7 +56,7 @@ class erpApp(tk.Tk):
         label = tk.Label(self, image=self.tk_image, borderwidth=0)
         label.pack()
 
-        self.after(500, self.show_main_menu)  
+        self.after(700, self.show_main_menu)  
 
     def show_main_menu(self):
         self.clear_screen()
@@ -74,7 +78,7 @@ class erpApp(tk.Tk):
         self.logo_label.pack(side="left", pady=0)
 
         # Balance label
-        balance_amount = "$0.00"
+        balance_amount = f"${self.balance:.2f}"
         self.balance_label = tk.Label(self.top_left_frame, text=balance_amount, fg="white", bg="#000033", font=("Helvetica", 10))
         self.balance_label.pack(side="left", padx=5, pady=0)
 
@@ -129,7 +133,7 @@ class erpApp(tk.Tk):
         self.logo_label.pack(side="left", pady=0)
 
         # Balance label
-        balance_amount = "$0.00"
+        balance_amount = f"${self.balance:.2f}"
         self.balance_label = tk.Label(self.top_left_frame, text=balance_amount, fg="white", bg="#000033", font=("Helvetica", 10))
         self.balance_label.pack(side="left", padx=5, pady=0)
 
@@ -167,7 +171,8 @@ class erpApp(tk.Tk):
 
         self.logo_photo3 = ImageTk.PhotoImage(logo_img3)
 
-        icon_button = tk.Button(icon_label_frame, image=self.logo_photo3, command=self.show_main_menu,
+        # button for the Setting icon (Gear icon) Nd to change from main menu to have a custom menu
+        icon_button = tk.Button(icon_label_frame, image=self.logo_photo3, command=self.settings_options,
                         bg="#000033", fg="white", relief="flat", font=("Helvetica", 10))
         icon_button.pack(side="top")  # Stacks on top
 
@@ -190,7 +195,6 @@ class erpApp(tk.Tk):
 
         quit_text_label = tk.Label(next_button_frame, text="Quit", bg="#000033", fg="white", font=("Helvetica", 9))
         quit_text_label.pack(side="top")
-
 
         # Card Payment "ON" button
 
@@ -222,6 +226,59 @@ class erpApp(tk.Tk):
             self.card_payment_on_button.config(image=self.logo_card_payment_on)
             self.is_card_on = True
             
+    # func for Settings (Gear icon png) menu
+    def settings_options(self):
+
+        self.clear_screen()
+
+        # Top bar again for consistency
+        self.top_bar_frame = tk.Frame(self, bg="#000033")
+        self.top_bar_frame.pack(fill="x", pady=0)
+
+        # === Top-Left Frame (Logo + Balance) ===
+        self.top_left_frame = tk.Frame(self.top_bar_frame, bg="#000033")
+        self.top_left_frame.pack(side="left", padx=10, anchor="n")
+
+        # CEPAS Logo (resized to same size as hamburger)
+        logo_path2 = r"C:\_projects\taxi_meter_interface\asserts\cepas_logo.png" 
+        logo_img2 = Image.open(logo_path2).resize((30, 30))  # Ensure exact same size
+        self.logo_photo2 = ImageTk.PhotoImage(logo_img2)
+
+        self.logo_label = tk.Label(self.top_left_frame, image=self.logo_photo2, bg="#000033")
+        self.logo_label.pack(side="left", pady=0)
+
+        # Balance label
+        balance_amount = f"${self.balance:.2f}"
+        self.balance_label = tk.Label(self.top_left_frame, text=balance_amount, fg="white", bg="#000033", font=("Helvetica", 10))
+        self.balance_label.pack(side="left", padx=5, pady=0)
+
+        now = datetime.now()
+
+        time_str = now.strftime("%I:%M %p")  # 06:17 PM format
+
+        self.time_label = tk.Label(self.top_bar_frame, text=f"{time_str}", fg="white", bg="#000033", font=("Helvetica", 13))
+        self.time_label.place(relx=0.5, rely=0.5, anchor="center")
+
+        self.update_time()
+
+        # === top_right_frame (Logo + Balance) ===
+        self.top_right_frame = tk.Frame(self.top_bar_frame, bg="#000033")
+        self.top_right_frame.pack(side="right", padx=0, anchor="n")
+
+        # home Logo 
+        logo_path = r"C:\_projects\taxi_meter_interface\asserts\home_menu.png" 
+        logo_img = Image.open(logo_path).resize((30, 30))  # Ensure exact same size
+        self.logo_photo = ImageTk.PhotoImage(logo_img)
+
+        # Home menu button
+        back_button = tk.Button(self.top_right_frame, image=self.logo_photo, command=self.show_main_menu, bg="#000033", fg="white", relief="flat", font=("Helvetica", 10))
+        back_button.pack(side="right", padx=0)
+
+
+
+
+
+
     def quit_app(self):
         self.clear_screen()
         self.geometry("350x140")  # Fixed window size
@@ -235,8 +292,23 @@ class erpApp(tk.Tk):
         label = tk.Label(self, image=self.tk_image, borderwidth=0)
         label.pack()
 
-        self.after(500, self.destroy)  
+        self.after(700, self.destroy)  
         
+    # load balancing function
+    def load_balance(self):
+        try:
+            with open(self.balance_file, "r") as file:
+                return float(file.read())
+        except(FileNotFoundError,ValueError):
+            return 0.00 # default starting balance
+        
+    # saving the balance 
+    def save_balance(self):
+        with open(self.balance_file,"w") as file:
+            file.write(str(self.balance))
+    
+
+
 
     def update_time(self):
         if hasattr(self, "time_label") and self.time_label.winfo_exists():
