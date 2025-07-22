@@ -274,11 +274,6 @@ class erpApp(tk.Tk):
         back_button = tk.Button(self.top_right_frame, image=self.logo_photo, command=self.show_main_menu, bg="#000033", fg="white", relief="flat", font=("Helvetica", 10))
         back_button.pack(side="right", padx=0)
 
-
-
-
-
-
     def quit_app(self):
         self.clear_screen()
         self.geometry("350x140")  # Fixed window size
@@ -307,9 +302,6 @@ class erpApp(tk.Tk):
         with open(self.balance_file,"w") as file:
             file.write(str(self.balance))
     
-
-
-
     def update_time(self):
         if hasattr(self, "time_label") and self.time_label.winfo_exists():
             current_time = time.strftime("%I:%M %p")
