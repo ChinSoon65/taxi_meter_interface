@@ -2,7 +2,7 @@ import tkinter as tk
 import time
 import pygame
 import threading
-import keyboard  # <<-- back to using this
+import keyboard  
 from datetime import datetime
 from PIL import Image, ImageTk
 import tkinter.font as tkFont
@@ -57,7 +57,6 @@ class erpApp(tk.Tk):
     def safe_toggle_parking(self):
         if not self.is_processing:
             self.is_processing = True
-            print("✅ Ctrl+8 pressed - toggling parking mode")
             self.after(0, self.toggle_parking_mode)
             self.after(3000, lambda: setattr(self, 'is_processing', False))
 
@@ -132,10 +131,7 @@ class erpApp(tk.Tk):
         settings_frame = tk.Frame(self, bg="#000033")
         settings_frame.pack(expand=True)
 
-        title = tk.Label(settings_frame, text="Settings", bg="#000033", fg="white", font=("Helvetica", 14, "bold"))
-        title.pack(pady=(10, 10))
-
-        parking_button_text = "Start Parking" if not self.is_parking_active else "End Parking"
+        parking_button_text = "Start Metered Parking" if not self.is_parking_active else "End Metered Parking"
         parking_button = tk.Button(settings_frame, text=parking_button_text, width=20, command=self.toggle_parking_mode)
         parking_button.pack(pady=1)
 
@@ -144,6 +140,43 @@ class erpApp(tk.Tk):
 
         quit_button = tk.Button(settings_frame, text="Quit", width=20, command=self.quit_app)
         quit_button.pack(pady=1)
+
+        next_page_button = tk.Button(settings_frame, text="→", width=20, command=self.show_settings_page_2)
+        next_page_button.pack(pady=(10, 1))
+
+    def show_settings_page_2(self): # the second page of the settings menu
+            self.clear_screen()
+
+            settings_frame = tk.Frame(self, bg="#000033")
+            settings_frame.pack(expand=True)
+
+            season_button = tk.Button(settings_frame, text = 'Fixed Parking (Debug)', width = 20, command = self.show_fixed_parking)
+            season_button.pack(pady=(10,1))
+
+            next_page_button = tk.Button(settings_frame, text="←", width=20, command=self.show_settings_menu)
+            next_page_button.pack(pady=(10, 1))
+
+    def show_fixed_parking(self):
+        self.clear_screen()
+        self.play_exit_sound()
+
+        fixed_fee = 2.95
+
+        label1 = tk.Label(self, text=f"Fee: ${fixed_fee:.2f}", fg="red", bg="#000033", font=self.digital_font)
+        label1.pack(pady=(20, 30))
+        label2 = tk.Label(self, text="Welcome to CP 39", fg="red", bg="#000033", font=self.digital_font)
+        label2.pack()
+
+        if fixed_fee <= self.balance:
+            self.balance -= fixed_fee
+            self.save_balance()
+            self.update_balance_label()
+        else:
+            print("Insufficient balance. Please top up your CEPAS card and try again.")
+
+        self.after(2500, self.show_main_menu)
+
+
 
     def start_parking_mode(self):
         if self.is_parking_active:
@@ -189,6 +222,7 @@ class erpApp(tk.Tk):
         try:
             sound_path = os.path.join(ASSETS_DIR, 'erp_sound.mp3')
             pygame.mixer.music.load(sound_path)
+            pygame.mixer.music.set_volume(0.2)
             pygame.mixer.music.play()
         except Exception as e:
             print(f"Error playing sound: {e}")
