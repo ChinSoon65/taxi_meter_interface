@@ -438,7 +438,7 @@ class LalamoveDriverApp(tk.Tk):
     def __init__(self):
         
         super().__init__()
-        self.title("Lalamove Driver App")
+        self.title("Driver App")
         self.geometry("320x460")
         self.resizable(False, False)
         self.configure(bg="#f2f2f2")
