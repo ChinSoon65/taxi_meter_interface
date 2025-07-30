@@ -183,7 +183,7 @@ class JobScreen(tk.Frame):
             "Hot Rolled Inc. Steel [S-W]"
         ]
 
-        self.transport_type = "Van"
+        self.transport_type = "Car/Van"
         self.on_duty = True
         self.current_job = None
         self.job_timer_id = None
@@ -235,11 +235,13 @@ class JobScreen(tk.Frame):
 
         self.accept_btn = tk.Button(btn_container, text="Accept", bg="#28A745", fg="white",
                                     font=("Helvetica", 10, "bold"), width=10, command=self.accept_job)
-        self.accept_btn.pack(side="left", padx=10)
+        self.accept_btn = tk.Button(btn_container, text="Accept", bg="#28A745", fg="white",
+                            font=("Helvetica", 10, "bold"), width=10, command=self.accept_job)
 
         self.decline_btn = tk.Button(btn_container, text="Decline", bg="#DC3545", fg="white",
                                      font=("Helvetica", 10, "bold"), width=10, command=self.decline_job)
-        self.decline_btn.pack(side="right", padx=10)
+        self.decline_btn = tk.Button(btn_container, text="Decline", bg="#DC3545", fg="white",
+                             font=("Helvetica", 10, "bold"), width=10, command=self.decline_job)
 
         self.start_job_cycle()
         self.clear_job()
@@ -253,8 +255,6 @@ class JobScreen(tk.Frame):
         self.transport_label.config(text="")
         self.items_label.config(text="")
         self.pay_label.config(text="")
-        self.accept_btn.config(state="disabled")
-        self.decline_btn.config(state="disabled")
 
         wait_time = random.randint(3, 7) * 1000
         self.job_timer_id = self.after(wait_time, self.assign_job)
@@ -262,6 +262,8 @@ class JobScreen(tk.Frame):
     def assign_job(self):
         self.current_job = self.generate_random_job()
         self.show_job(self.current_job)
+        self.accept_btn.pack(side="left", padx=10)
+        self.decline_btn.pack(side="right", padx=10)
         self.accept_btn.config(state="normal")
         self.decline_btn.config(state="normal")
 
@@ -313,8 +315,13 @@ class JobScreen(tk.Frame):
         self.transport_label.config(text="")
         self.items_label.config(text="")
         self.pay_label.config(text="")
+
         self.accept_btn.config(state="disabled")
         self.decline_btn.config(state="disabled")
+    
+        # Add this:
+        self.accept_btn.pack_forget()
+        self.decline_btn.pack_forget()
 
     def accept_job(self):
         self.pulse_button(self.accept_btn, "#28a745")
@@ -439,7 +446,7 @@ class LalamoveDriverApp(tk.Tk):
         
         super().__init__()
         self.title("Driver App")
-        self.geometry("320x460")
+        self.geometry("260x360")
         self.resizable(False, False)
         self.configure(bg="#f2f2f2")
         self.stats = load_stats()
@@ -486,6 +493,8 @@ class LalamoveDriverApp(tk.Tk):
         _go()
 
     def open_job_screen(self):
+        if hasattr(self, "job_screen"):
+            self.job_screen.destroy()
         self.job_screen = JobScreen(self, self.driver_mode)
 
     def switch_to_job_in_progress(self, job):
